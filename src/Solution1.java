@@ -13,20 +13,18 @@ public class Solution1 {
                 .sorted(
                         Comparator.comparing(Library::getNumberOfDaysTakenToSignUp)
                                 .thenComparing(library -> {
-                                    long sum = library.getBooks().stream()
-                                            .mapToLong(book -> input.getBookIdScoreMap().get(book.getId()))
+                                    return library.getBooks().stream()
+                                            .mapToLong(Book::getScore)
                                             .sorted()
                                             .limit(input.getNumberOfDays())
                                             .reduce(Long::sum)
                                             .getAsLong();
-
-                                    return sum;
                                 })
                 )
                 .map(library -> new Answer.Library(
                         library.getId(),
                         library.getBooks().stream()
-                                .sorted(Comparator.comparing(book -> input.getBookIdScoreMap().get(book.getId())))
+                                .sorted(Comparator.comparing(Book::getScore))
                                 .limit(input.getNumberOfDays())
                                 .mapToLong(Book::getId)
                                 .boxed()
