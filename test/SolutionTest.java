@@ -4,7 +4,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.PrintWriter;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SolutionTest {
@@ -22,11 +24,32 @@ public class SolutionTest {
 
     @ParameterizedTest
     @MethodSource("dataSource")
-    public void test(String fileName) {
+    public void testWithJavaSolution(String fileName) {
         Input input = parseFile(fileName);
         Answer answer = Solution1.getAnswer(input);
+        createOutputFile(answer, fileName.replace("input", "javaOutput"));
+
         Long score = getScore(input, answer);
-        createOutputFile(fileName.replace("input", "output"));
+        System.out.println("Score - " + score);
+    }
+
+    public static Stream<Arguments> pythonOutput_dataSource() {
+        return Stream.of(
+                /*Arguments.of("input/a.txt", "pythonOutput/a.txt"),
+                Arguments.of("input/b.txt", "pythonOutput/b.txt"),
+                Arguments.of("input/c.txt", "pythonOutput/c.txt"),
+                Arguments.of("input/d.txt", "pythonOutput/d.txt"),
+                Arguments.of("input/e.txt", "pythonOutput/e.txt"),*/
+                Arguments.of("input/f.txt", "pythonOutput/f.txt")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("pythonOutput_dataSource")
+    public void testWithPythonSolution(String inputFileName, String outputFileName) {
+        Input input = parseFile(inputFileName);
+        Answer answer = parsePythonOutputFile(outputFileName);
+        Long score = getScore(input, answer);
         System.out.println("Score - " + score);
     }
 
@@ -54,7 +77,7 @@ public class SolutionTest {
                 String lineOne = reader.readLine();
                 String[] lineOneArray = lineOne.split(" ");
                 long numBooksInLibrary = Long.parseLong(lineOneArray[0]);
-                long numDaysSignUp = Long.parseLong(lineOneArray[2]);
+                long numDaysSignUp = Long.parseLong(lineOneArray[1]);
                 long numBooksScannablePerDay = Long.parseLong(lineOneArray[2]);
 
                 String lineTwo = reader.readLine();
@@ -126,7 +149,58 @@ public class SolutionTest {
         return currentScore;
     }
 
-    void createOutputFile(String filename) {
-        // ToDo
+    void createOutputFile(Answer answer, String filename) {
+        try {
+            PrintWriter writer = new PrintWriter(filename, "UTF-8");
+
+            writer.println(answer.getNumberOfLibrariesToSignUp());
+            for (int i = 0; i < answer.getNumberOfLibrariesToSignUp(); i++) {
+                Answer.Library library = answer.getLibraryList().get(i);
+                writer.println(library.getId() + " " + library.getNumberOfBooksToScan());
+                writer.println(library.getBookIdsToScan().stream()
+                        .map(String::valueOf)
+                        .collect(Collectors.joining(" "))
+                );
+            }
+
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    Answer parsePythonOutputFile(String fileName) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+
+            String firstLine = reader.readLine();
+            long numLibraries = Long.parseLong(firstLine);
+
+            List<Answer.Library> libraryList = new ArrayList<>();
+            for (int i = 0; i < numLibraries; i++) {
+
+                String lineOne = reader.readLine();
+                String[] lineOneArray = lineOne.split(" ");
+                long id = Long.parseLong(lineOneArray[0]);
+                long numBooksToScan = Long.parseLong(lineOneArray[1]);
+
+                String lineTwo = reader.readLine();
+                String[] bookIds = lineTwo.split(" ");
+                List<Long> bookIdsList = Arrays.stream(bookIds)
+                        .mapToLong(Long::parseLong)
+                        .boxed()
+                        .collect(Collectors.toList());
+
+                libraryList.add(new Answer.Library(id, bookIdsList));
+            }
+
+            reader.close();
+
+            return new Answer(libraryList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
     }
 }
