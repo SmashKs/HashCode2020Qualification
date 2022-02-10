@@ -135,13 +135,14 @@ public class SolutionTest {
             long remainingDays = input.getNumberOfDays() - currentDay;
             long numberOfScannableBooks = remainingDays * equivalentLibrary.getNumberOfBooksScannablePerDay();
 
-            long sumScore = library.getBookIdsToScan().stream()
+            OptionalLong sumScoreOptional = library.getBookIdsToScan().stream()
                     .map(bookIdScoreMap::remove)
                     .filter(Objects::nonNull)
                     .limit(numberOfScannableBooks)
                     .mapToLong(j -> (long) j)
-                    .reduce(Long::sum)
-                    .getAsLong();
+                    .reduce(Long::sum);
+
+            long sumScore = sumScoreOptional.isPresent() ? sumScoreOptional.getAsLong() : 0L;
 
             currentScore += sumScore;
         }
