@@ -46,7 +46,7 @@ def signup_library(ratios: list, ratio_to_lib: dict, libraries: list, scores: li
         # put all books into the `global map` before the deadline
         # start_day += singup_process_daysstart
         library = libraries[ratio_to_lib[ratio]]
-        start_day += library[0] # sign-up day
+        start_day += library[0] # sign-up dayw
         rest_days = task_days - start_day # many days library can use
 
         idx = 2 # 0: sign-up, 1: how many boos can be sccanned for each day
