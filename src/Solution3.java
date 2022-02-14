@@ -7,6 +7,9 @@ import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.Set;
 
+/**
+ * Solution 3 is a copy of Solution 2, but re-calculates each library's rank
+ */
 public class Solution3 implements Solution {
 
     PriorityQueue<Solution3.Pair> heap = new PriorityQueue<>((a, b) -> (int) (b.rate - a.rate));
@@ -29,7 +32,7 @@ public class Solution3 implements Solution {
             day += library.getNumberOfDaysTakenToSignUp();
             long remainedDays = deadline - day, scannedCount = 0;
             // sort the books by the score point
-            List<Book> books = sortByScore(library.getBooks());
+            List<Book> books = sortByScore(library.getBooks(), bookIdScoreMap);
             List<Long> scannedBookOfLibrary = new ArrayList<>();
             // scan books
             for (final Book book : books) {
@@ -53,8 +56,10 @@ public class Solution3 implements Solution {
         return new Answer(res);
     }
 
-    public List<Book> sortByScore(List<Book> books) {
-        books.sort((book1, book2) -> (int) (book2.getScore() - book1.getScore()));
+    public List<Book> sortByScore(List<Book> books, Map<Long, Integer> bookIdScoreMap) {
+        books.sort((book1, book2) -> (int)
+                (bookIdScoreMap.getOrDefault(book2.getId(), 0) -
+                        bookIdScoreMap.getOrDefault(book1.getId(), 0)));
         return books;
     }
 
