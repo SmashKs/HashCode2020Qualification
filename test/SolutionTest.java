@@ -32,7 +32,8 @@ public class SolutionTest {
     @MethodSource("dataSource")
     public void testWithJavaSolution(String fileName) {
         Input input = parseFile(fileName);
-        Answer answer = Solution1.getAnswer(input);
+        Solution solution = new Solution3();
+        Answer answer = solution.getAnswer(input);
         createOutputFile(answer, fileName.replace("input", "javaOutput"));
 
         Long score = getScore(input, answer);
@@ -41,11 +42,11 @@ public class SolutionTest {
 
     public static Stream<Arguments> pythonOutput_dataSource() {
         return Stream.of(
-                /*Arguments.of("input/a.txt", "pythonOutput/a.txt"),
+                Arguments.of("input/a.txt", "pythonOutput/a.txt"),
                 Arguments.of("input/b.txt", "pythonOutput/b.txt"),
                 Arguments.of("input/c.txt", "pythonOutput/c.txt"),
                 Arguments.of("input/d.txt", "pythonOutput/d.txt"),
-                Arguments.of("input/e.txt", "pythonOutput/e.txt"),*/
+                Arguments.of("input/e.txt", "pythonOutput/e.txt"),
                 Arguments.of("input/f.txt", "pythonOutput/f.txt")
         );
     }
