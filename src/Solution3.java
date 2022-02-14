@@ -8,7 +8,11 @@ import java.util.PriorityQueue;
 import java.util.Set;
 
 /**
- * Solution 3 is a copy of Solution 2, but re-calculates each library's rank
+ * Solution 3 is a copy of Solution 2, but re-calculates each library's rank after a library is selected.
+ *
+ * 1. Calculate the rank for each library (total score for all non-scanned books and divide by number of days to sign up)
+ * 2. Choose library with best score
+ * 3. Start from #1 again with remaining libraries
  */
 public class Solution3 implements Solution {
 
@@ -19,10 +23,11 @@ public class Solution3 implements Solution {
         // sorting by the rank
         List<Library> libraryList = new ArrayList<>(input.getLibraryList());
         Map<Long, Integer> bookIdScoreMap = new HashMap<>(input.getBookIdScoreMap());
+        long deadline = input.getNumberOfDays();
         heap = getNewValuesForHeap(libraryList, bookIdScoreMap);
 
         // scan the books
-        long deadline = input.getNumberOfDays(), day = 0;
+        long day = 0;
         List<Answer.Library> res = new ArrayList<>();
         Set<Book> scanned = new HashSet<>();
         while (!heap.isEmpty() && day < deadline) {
@@ -30,7 +35,8 @@ public class Solution3 implements Solution {
             libraryList.remove(library);
             // make the day go to the next
             day += library.getNumberOfDaysTakenToSignUp();
-            long remainedDays = deadline - day, scannedCount = 0;
+            long remainedDays = deadline - day;
+            long scannedCount = 0;
             // sort the books by the score point
             List<Book> books = sortByScore(library.getBooks(), bookIdScoreMap);
             List<Long> scannedBookOfLibrary = new ArrayList<>();
@@ -73,7 +79,8 @@ public class Solution3 implements Solution {
         }
     }
 
-    private PriorityQueue<Solution3.Pair> getNewValuesForHeap(final List<Library> libraryList, Map<Long, Integer> bookIdScoreMap) {
+    private PriorityQueue<Solution3.Pair> getNewValuesForHeap(final List<Library> libraryList,
+                                                              final Map<Long, Integer> bookIdScoreMap) {
         PriorityQueue<Solution3.Pair> heap = new PriorityQueue<>((a, b) -> (int) (b.rate - a.rate));
         libraryList.forEach(library -> {
             long totalScoreOfBooks = library.getBooks().stream()
