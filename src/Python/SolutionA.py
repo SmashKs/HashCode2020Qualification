@@ -36,4 +36,6 @@ class SolutionA(BaseSolution):
                     scanned_books.add(book)
                     scanned_library.bookList().append(book.bookId)
                 rest_day -= 1
-            self._outputData.libraries().append(scanned_library)
+
+            if scanned_library.numBooks() > 0:
+                self._outputData.libraries().append(scanned_library)

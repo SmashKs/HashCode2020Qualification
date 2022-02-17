@@ -16,7 +16,7 @@ class ScannedLibrary:
         return self._bookList
 
     def numBooks(self):
-        return str(len(self._bookList))
+        return len(self._bookList)
 
     def bookListToStr(self):
         return ' '.join(list(map(str, self._bookList)))

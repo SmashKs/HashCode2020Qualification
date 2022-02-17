@@ -19,7 +19,9 @@ class BaseSolution:
             fd.write(self._outputData.numLibrariesWillBeScanned)
             fd.write("\n")
             for library in self._outputData.libraries():
-                fd.write(library.libraryId + ' ' + library.numBooks())
+                if library.numBooks() == 0:
+                    continue
+                fd.write(str(library.libraryId) + ' ' + str(library.numBooks()))
                 fd.write("\n")
                 fd.write(library.bookListToStr())
                 fd.write("\n")
